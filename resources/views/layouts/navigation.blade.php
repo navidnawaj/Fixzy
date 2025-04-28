@@ -16,11 +16,19 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                     
-                    {{-- @if (auth()->user()->role == 'seller') --}}
+                    @if (auth()->user()->role == 'seller')
                         <x-nav-link :href="route('service.create')" :active="request()->routeIs('service.create')">
                             {{ __('Add Service') }}
                         </x-nav-link>
-                    {{-- @endif --}}
+
+                        <x-nav-link :href="route('order.providers')" :active="request()->routeIs('order.providers')">
+                            {{ __('Orders') }}
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('provider.analytics')" :active="request()->routeIs('provider.analytics')">
+                            {{ __('Analytics') }}
+                        </x-nav-link>
+                    @endif
 
                     @if (auth()->user()->role == 'customer')
                         <x-nav-link :href="route('service.services')" :active="request()->routeIs('service.services')">

@@ -64,7 +64,7 @@ class OrderController extends Controller
 
         $orders = Order::where('user_id', $user->id)->with('service')->get();
 
-        return view('orders.customer', compact('orders'));
+        return view('orders.seller_orders', compact('orders'));
     }
 
 
@@ -93,7 +93,9 @@ class OrderController extends Controller
 
 
 
-
+    //Seller Analytics
+    // This function will show the analytics for the seller
+    // It will show the total revenue earned, total jobs completed, and pending jobs
 
     public function providerAnalytics()
     {
@@ -103,24 +105,19 @@ class OrderController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        // Get all services created by this user
         $services = Service::where('user_id', $user->id)->pluck('id');
 
-        // Get all completed orders for these services
         $completedOrders = Order::whereIn('service_id', $services)
                                 ->where('status', 'completed')
                                 ->with('service')
                                 ->get();
 
-        // Total revenue earned
         $totalRevenue = $completedOrders->sum(function($order) {
             return $order->service->ServicePrice ?? 0;
         });
 
-        // Total jobs completed
         $totalCompletedJobs = $completedOrders->count();
 
-        // Pending jobs
         $pendingJobs = Order::whereIn('service_id', $services)
                             ->where('status', 'pending')
                             ->count();
@@ -128,4 +125,71 @@ class OrderController extends Controller
         return view('analytics', compact('totalRevenue', 'totalCompletedJobs', 'pendingJobs'));
     }
 
+
+    public function platformAnalytics()
+    {
+        $user = Auth::user();
+
+        // Optional: protect this route (e.g., only admin can see platform-wide analytics)
+        if (!$user || $user->role !== 'super admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        $totalRevenue = Order::where('status', 'completed')
+        ->with('service') // eager load service
+        ->get()
+        ->sum(function ($order) {
+            return $order->service->ServicePrice ?? 0;
+        });
+        $totalOrders = Order::count();
+        $totalServices = Service::count();
+        $totalCustomers = User::where('role', 'customer')->count();
+        $totalSellers = User::where('role', 'seller')->count();
+
+        return view('admindashboard', [
+            'totalRevenue' => $totalRevenue,
+            'totalOrders' => $totalOrders,
+            'totalServices' => $totalServices,
+            'totalCustomers' => $totalCustomers,
+            'totalSellers' => $totalSellers,
+        ]);
+    }
+
+
+    public function view_order($id)
+    {
+        $order = Order::findOrFail($id);
+
+        // Check if the logged-in user is either the customer or the service provider
+        if (Auth::id() !== $order->user_id && Auth::id() !== $order->service->user_id) {
+            abort(403, 'Unauthorized');
+        }
+
+        return view('orders.single_order', [
+            'order' => $order,
+        ]);
+    }
+
+    public function store_feedback (Request $request, $id)
+    {
+        $request->validate([
+            'review' => 'required|string|max:255',
+        ]);
+
+        $order = Order::findOrFail($id);
+
+        // Check if the logged-in user is the customer
+        if (Auth::id() !== $order->user_id) {
+            abort(403, 'Unauthorized');
+        }
+
+        $order->review = $request->review;
+        $order->save();
+
+        return redirect()->back()->with('success', 'Feedback submitted successfully!');
+    }
+
 }
+
+
+

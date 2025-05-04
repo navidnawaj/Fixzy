@@ -5,10 +5,58 @@
         </h2>
     </x-slot>
 
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="grid grid-cols-3 p-6 text-gray-900 dark:text-gray-100">
+                    <form method="GET" action="{{ route('service.services') }}" class="mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            
+                            <!-- Search Input -->
+                            <div>
+                                <input type="text" name="search" placeholder="Search services..." value="{{ request('search') }}" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            </div>
+                    
+                            <!-- Min Price -->
+                            <div>
+                                <input type="number" step="0.01" name="min_price" placeholder="Min Price" value="{{ request('min_price') }}" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            </div>
+                    
+                            <!-- Max Price -->
+                            <div>
+                                <input type="number" step="0.01" name="max_price" placeholder="Max Price" value="{{ request('max_price') }}" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            </div>
+                    
+                            <!-- Submit Button -->
+                            <div>
+                                <button type="submit" class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                    Search
+                                </button>
+                            </div>
+
+                            <a href="{{ route('service.services') }}" class="w-full p-2 text-center border rounded-lg text-gray-700 dark:text-white dark:border-gray-600">
+                                Reset
+                            </a>
+                    
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="grid grid-cols-3 p-6 text-gray-900 dark:text-gray-100">
+
+
+                    @if ($services->isEmpty())
+                        <p class="text-center text-gray-500 dark:text-gray-400">No services found matching your search.</p>
+                    @endif
                     
                     @foreach ($services as $service)
                         <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
@@ -24,7 +72,6 @@
                                 </svg>
                             </a>
                         </div>
-                
                     @endforeach
 
                 </div>

@@ -34,6 +34,16 @@
                         <x-nav-link :href="route('service.services')" :active="request()->routeIs('service.services')">
                             {{ __('All Service') }}
                         </x-nav-link>
+
+                        <x-nav-link :href="route('customer.orders')" :active="request()->routeIs('customer.orders')">
+                            {{ __('Order History') }}
+                        </x-nav-link>
+                    @endif
+
+                    @if (auth()->user()->role == 'super admin')
+                        <x-nav-link :href="route('provider.analytics')" :active="request()->routeIs('provider.analytics')">
+                            {{ __('Analytics') }}
+                        </x-nav-link>
                     @endif
                     
                 </div>

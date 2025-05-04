@@ -8,9 +8,30 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {   
-        $service = Service::all();
+        $query = Service::query();
+
+        // Search by keyword
+        if ($request->has('search') && $request->search != '') {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('ServiceName', 'LIKE', "%{$searchTerm}%")
+                ->orWhere('ServiceDescription', 'LIKE', "%{$searchTerm}%");
+            });
+        }
+
+        // Filter by Price Range
+        if ($request->has('min_price') && $request->min_price != '') {
+            $query->where('ServicePrice', '>=', $request->min_price);
+        }
+
+        if ($request->has('max_price') && $request->max_price != '') {
+            $query->where('ServicePrice', '<=', $request->max_price);
+        }
+
+        $service = $query->get();
+
         return view('service.services', [
             'services' => $service,
         ]);
@@ -30,7 +51,6 @@ class ServiceController extends Controller
             'ServiceCategory' => 'nullable|string|max:255',
         ]);
 
-        // 🛠 Add the logged-in user's ID into the data
         $data['user_id'] = auth()->id(); 
 
         $newservice = Service::create($data);
@@ -50,11 +70,9 @@ class ServiceController extends Controller
 
     public function provider_orders()
     {
-        // Fetch the logged-in user (service provider)
         $user = auth()->user();
 
         if ($user->role === 'seller') {
-            // Fetch orders related to the services provided by this service provider (user)
             $orders = Order::whereHas('service', function($query) use ($user) {
                 $query->where('user_id', $user->id);
             })->get();
@@ -62,7 +80,14 @@ class ServiceController extends Controller
             $orders = collect(); // If not seller, no orders
         }
 
-        // Pass the orders to the view (orders.blade.php)
         return view('orders.provider_orders', compact('orders'));
+    }
+
+    //API 
+
+    public function serviceapi()
+    {
+        $services = Service::all();
+        return response()->json($services);
     }
 }

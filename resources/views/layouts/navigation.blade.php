@@ -45,6 +45,10 @@
                             {{ __('Analytics') }}
                         </x-nav-link>
                     @endif
+
+                    <x-nav-link :href="route('chat')" :active="request()->routeIs('chat')">
+                        {{ __('Chat') }}
+                    </x-nav-link>
                     
                 </div>
             </div>

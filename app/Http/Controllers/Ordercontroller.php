@@ -119,7 +119,7 @@ class OrderController extends Controller
         $totalCompletedJobs = $completedOrders->count();
 
         $pendingJobs = Order::whereIn('service_id', $services)
-                            ->where('status', 'pending')
+                            ->where('status', 'in progress')
                             ->count();
 
         return view('analytics', compact('totalRevenue', 'totalCompletedJobs', 'pendingJobs'));

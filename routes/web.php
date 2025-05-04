@@ -4,14 +4,18 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ChatController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard',  function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [ProfileController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 
 Route::get('/services', [ServiceController::class, 'index'])->name('service.services');
@@ -27,7 +31,7 @@ Route::get('/provider/orders', [OrderController::class, 'providerOrders'])
     ->middleware('auth') // Only authenticated users can view this page
     ->name('order.providers');
 Route::put('/orders/{order}/mark-completed', [OrderController::class, 'markCompleted'])->name('orders.markCompleted');
-Route::get('/analytics', [OrderController::class, 'platformAnalytics'])->name('provider.analytics');
+Route::get('/analytics', [OrderController::class, 'providerAnalytics'])->name('provider.analytics');
 
 
 Route::get('/customer/orders', [OrderController::class, 'customerOrders'])
@@ -42,6 +46,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+
+Route::match(['GET', 'POST'], '/chat', [App\Http\Controllers\ChatController::class, 'index'])->name('chat');
 
 //API
 

@@ -4,14 +4,14 @@
             {{ __('All Service') }}
         </h2>
     </x-slot>
-
+    
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-4">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="grid grid-cols-3 p-6 text-gray-900 dark:text-gray-100">
+                <div class="grid grid-cols-1 p-6 text-gray-900 dark:text-gray-100">
                     <form method="GET" action="{{ route('service.services') }}" class="mb-6">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             
                             <!-- Search Input -->
                             <div>
@@ -27,8 +27,8 @@
                             <div>
                                 <input type="number" step="0.01" name="max_price" placeholder="Max Price" value="{{ request('max_price') }}" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:text-white">
                             </div>
-                    
-                            <!-- Submit Button -->
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <button type="submit" class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                                     Search
@@ -38,21 +38,15 @@
                             <a href="{{ route('service.services') }}" class="w-full p-2 text-center border rounded-lg text-gray-700 dark:text-white dark:border-gray-600">
                                 Reset
                             </a>
-                    
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-    </div>
 
-    
-
-    <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="grid grid-cols-3 p-6 text-gray-900 dark:text-gray-100">
-
+                <div class="grid grid-cols-3 gap-4 p-6 text-gray-900 dark:text-gray-100">
 
                     @if ($services->isEmpty())
                         <p class="text-center text-gray-500 dark:text-gray-400">No services found matching your search.</p>

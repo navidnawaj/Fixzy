@@ -18,10 +18,19 @@ Route::get('/dashboard', [ProfileController::class, 'index'])
     ->name('dashboard');
 
 
+// Route::get('/services', [ServiceController::class, 'index'])->name('service.services');
+// Route::get('/services/create', [ServiceController::class, 'create'])->name('service.create');
+// Route::get('/services/{service}', [ServiceController::class, 'view_service'])->name('service.view');
+// Route::post('/services', [ServiceController::class, 'store'])->name('service.store');
+
 Route::get('/services', [ServiceController::class, 'index'])->name('service.services');
-Route::get('/services/create', [ServiceController::class, 'create'])->name('service.create');
+Route::get('/services/create', [ServiceController::class, 'create'])->name('service.create'); // move this up
+Route::post('/add_services', [ServiceController::class, 'store'])->name('service.store');
 Route::get('/services/{service}', [ServiceController::class, 'view_service'])->name('service.view');
-Route::post('/services', [ServiceController::class, 'store'])->name('service.store');
+Route::get('/my_services', [ServiceController::class, 'view_services'])->name('service.my_services');
+Route::delete('/services/{service}/delete', [ServiceController::class, 'destroy'])->name('service.delete');
+
+
 
 
 Route::post('/order/{serviceId}', [OrderController::class, 'store'])->middleware('auth')->name('order.store');

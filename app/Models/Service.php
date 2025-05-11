@@ -17,6 +17,7 @@ class Service extends Model
         'ServicePrice',
         'ServiceCategory',
         'user_id',
+        'image',
     ];
 
     public function orders()

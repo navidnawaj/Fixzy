@@ -16,10 +16,10 @@
                 <div class="max-w-7xl mx-auto">
                     <form method="GET" action="{{ route('dashboard') }}" class="mb-6">
                         <label for="category"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">Choose
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Choose
                             category:</label>
                         <select id="category" name="category" onchange="this.form.submit()"
-                            class="p-2 rounded border-gray-300 dark:bg-gray-700 dark:text-white">
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             @foreach ($categories as $cat)
                                 <option value="{{ $cat }}" {{ $category == $cat ? 'selected' : '' }}>
                                     {{ ucfirst($cat) }}

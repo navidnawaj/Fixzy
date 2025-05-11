@@ -49,15 +49,56 @@ class ServiceController extends Controller
             'ServiceDescription' => 'required|string',
             'ServicePrice' => 'required|numeric|min:0',
             'ServiceCategory' => 'nullable|string|max:255',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
         ]);
 
         $data['user_id'] = auth()->id(); 
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('services', 'public');
+            $data['image'] = $imagePath;
+        }
 
         $newservice = Service::create($data);
 
         session()->flash('success', 'Service created successfully!');
 
         return back();
+    }
+
+    public function edit($id)
+    {
+        $service = Service::findOrFail($id);
+        return view('service.edit', [
+            'service' => $service,
+        ]);
+    }
+
+    public function view_services()
+    {
+        $user = auth()->user();
+
+        if ($user->role === 'seller') {
+            $services = Service::where('user_id', $user->id)->get();
+        } else {
+            $services = collect(); // If not seller, no services
+        }
+
+        return view('service.seller_services', compact('services'));
+    }
+
+    public function destroy($id)
+    {
+        $service = Service::findOrFail($id);
+        $service->delete();
+
+
+        session()->flash('success', 'Service deleted successfully!');
+
+        
+        return redirect()->back();
+
+        
     }
 
     public function view_service($id)

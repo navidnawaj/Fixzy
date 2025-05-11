@@ -10,37 +10,46 @@ use GuzzleHttp\Exception\RequestException;
 class ChatController extends Controller
 {
     public function index(Request $request)
-{
-    if ($request->isMethod('GET')) {
-        return view('chat'); // Return a form for GET requests
-    }
+    {
+        if ($request->isMethod('GET')) {
+            return view('chat'); // Return a form for GET requests
+        }
 
-    // Handle POST request (your existing code)
-    $apiKey = env('DEEPSEEK_API_KEY');
-    $apiUrl = 'https://api.deepseek.com/v1/chat/completions';
+        // Handle POST request for Gemini API
+        $apiKey = env('GEMINI_API_KEY');
+        $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
-    $client = new Client();
-    try {
-        $response = $client->post($apiUrl, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $apiKey,
-                'Content-Type' => 'application/json',
-            ],
-            'json' => [
-                'model' => 'deepseek-chat',
-                'messages' => [
-                    ['role' => 'user', 'content' => $request->input('message', 'Hello')]
-                ]
-            ]
-        ]);
+        $client = new Client();
+        try {
+            $response = $client->post($apiUrl, [
+                'query' => ['key' => $apiKey],
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'contents' => [
+                        [
+                            'parts' => [
+                                ['text' => $request->input('message', 'Hello')],
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
 
-        return response()->json(json_decode($response->getBody(), true));
-    } catch (RequestException $e) {
-        return response()->json([
-            'error' => 'API Request Failed',
-            'details' => $e->getMessage()
-        ], 500);
+            $body = json_decode($response->getBody(), true);
+
+            if (isset($body['candidates'][0]['content']['parts'][0]['text'])) {
+                return response()->json(['response' => $body['candidates'][0]['content']['parts'][0]['text']]);
+            } else {
+                return response()->json(['error' => 'No response from Gemini'], 500);
+            }
+
+        } catch (RequestException $e) {
+            return response()->json([
+                'error' => 'Gemini API Request Failed',
+                'details' => $e->getMessage()
+            ], 500);
+        }
     }
 }
-}
-

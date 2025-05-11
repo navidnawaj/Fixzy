@@ -131,9 +131,6 @@ class OrderController extends Controller
         $user = Auth::user();
 
         // Optional: protect this route (e.g., only admin can see platform-wide analytics)
-        if (!$user || $user->role !== 'super admin') {
-            abort(403, 'Unauthorized');
-        }
 
         $totalRevenue = Order::where('status', 'completed')
         ->with('service') // eager load service

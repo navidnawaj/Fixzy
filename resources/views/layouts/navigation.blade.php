@@ -21,6 +21,10 @@
                             {{ __('Add Service') }}
                         </x-nav-link>
 
+                        <x-nav-link :href="route('service.my_services')" :active="request()->routeIs('service.my_services')">
+                            {{ __('My Services') }}
+                        </x-nav-link>
+
                         <x-nav-link :href="route('order.providers')" :active="request()->routeIs('order.providers')">
                             {{ __('Orders') }}
                         </x-nav-link>
@@ -41,7 +45,7 @@
                     @endif
 
                     @if (auth()->user()->role == 'super admin')
-                        <x-nav-link :href="route('provider.analytics')" :active="request()->routeIs('provider.analytics')">
+                        <x-nav-link :href="route('admin.analytics')" :active="request()->routeIs('admin.analytics')">
                             {{ __('Analytics') }}
                         </x-nav-link>
                     @endif
